@@ -21,7 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
+#include "uarray.h"
+ 
 #define T UArray2_T
 typedef struct T *T;
 
@@ -37,10 +38,10 @@ typedef struct T *T;
  *      
  * Return: The new array
  *      
- * Expects: parameters should be non-negative
- *      
- * Notes: CRE when parameters are NULL or negative or when there is a failure to
- *        allocate memory
+ * Expects: width >= 0, height >= 0, size > 0
+ *
+ * Notes: CRE if width or height is negative, if size <= 0,
+ *        or if memory allocation fails
  *      
  ************************/
 T UArray2_new(int width, int height, int size);
@@ -56,13 +57,13 @@ T UArray2_new(int width, int height, int size);
  *      
  * Return: a pointer to the element at index [row, col]
  *      
- * Expects: uarray2 is not NULL, row and col are between 0 and width and height,
+ * Expects: uarray2 is not NULL, row and col are between 0 and height and width,
  *          respectively
  *      
- * Notes: CRE when parameters are NULL or out of bounds
+ * Notes: CRE when parameters are NULL or indices are out of bounds
  *      
  ************************/
-void *UArray2_at(T uarray2, int row, int col);
+void *UArray2_at(T uarray2, int col, int row);
 
 /********** Uarray2_width ********
  *
@@ -73,9 +74,9 @@ void *UArray2_at(T uarray2, int row, int col);
  *      
  * Return: the width of the given array
  *      
- * Expects: none
+ * Expects: uarray2 is not NULL
  *      
- * Notes: none
+ * Notes: CRE if uarray2 is NULL
  *      
  ************************/
 int UArray2_width(T uarray2);
@@ -89,9 +90,9 @@ int UArray2_width(T uarray2);
  *      
  * Return: the height of the given array
  *      
- * Expects: none
+ * Expects: uarray2 is not NULL
  *      
- * Notes: none
+ * Notes: CRE if uarray2 is NULL
  *      
  ************************/
 int UArray2_height(T uarray2);
@@ -105,9 +106,9 @@ int UArray2_height(T uarray2);
  *      
  * Return: the size of the elements stored in the given array
  *      
- * Expects: none
+ * Expects: uarray2 is not NULL
  *      
- * Notes: none
+ * Notes: CRE if uarray2 is NULL
  *      
  ************************/
 int UArray2_size(T uarray2);
@@ -130,13 +131,13 @@ int UArray2_size(T uarray2);
  *      
  * Return: none
  *      
- * Expects: the parameter is not NULL
+ * Expects: uarray2 is not NULL and apply function is not NULL
  *      
  * Notes: none
  *      
  ************************/
 void UArray2_map_col_major(T uarray2, 
-                           void apply(int row, int col, T uarray2, 
+                           void apply(int col, int row, T uarray2, 
                                       void *p1, void *p2), 
                            void *cl);
 
@@ -158,13 +159,13 @@ void UArray2_map_col_major(T uarray2,
  *      
  * Return: none
  *      
- * Expects: the parameter is not an empty array
+ * Expects: uarray2 is not NULL and apply function is not NULL
  *      
  * Notes: none
  *      
  ************************/
 void UArray2_map_row_major(T uarray2, 
-                           void apply(int row, int col, T uarray2, 
+                           void apply(int col, int row, T uarray2, 
                                       void *p1, void *p2), 
                            void *cl);
 
@@ -179,7 +180,7 @@ void UArray2_map_row_major(T uarray2,
  *      
  * Expects: uarray2 is not NULL
  *      
- * Notes: CRE if uarray2 is NULL
+ * Notes: after return, *uarray2 is NULL
  *      
  ************************/
 void UArray2_free(T *uarray2);

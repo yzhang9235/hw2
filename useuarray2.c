@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include <uarray2.h>
+#include "uarray2.h"
 
 typedef long number;
 

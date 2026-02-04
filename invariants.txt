@@ -1,5 +1,8 @@
-Accessing the element at [i,j] in the UArray2 will return the element in row i,
-column j in the 2D array, unless i or j are out of bounds.
+Two invariants:
 
-Every row in a given UArray2 is the same width and every column in a given 
+1. For any Uarray, accessing the element at [i,j] in the UArray2 will get 
+exactly one element in row i, column j in the 2D array, unless i or j are 
+out of bounds.
+
+2. Every row in a given UArray2 is the same width and every column in a given 
 UArray2 is the same height, where the width and height are non negative.
