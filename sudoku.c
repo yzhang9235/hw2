@@ -46,6 +46,9 @@ int main (int argc, char *argv[])
         } else if (data.denominator != 9) {
                 fprintf(stderr, "invalid denominator\n");
                 exit(EXIT_FAILURE);
+        } else if (data.width != 9 || data.height != 9) {
+                fprintf(stderr, "invalid width and height\n");
+                exit(EXIT_FAILURE);
         }
         /* initialize a uarray2*/
         UArray2_T data_arr = UArray2_new(data.width, data.height, sizeof(int));
@@ -58,16 +61,21 @@ int main (int argc, char *argv[])
         info.table = Table_new(9, NULL, NULL);
         info.invalid_sudoku = false;
         UArray2_map_row_major(data_arr, validate_row, &info);
-        printf("%d\n", info.invalid_sudoku);
+        
         UArray2_map_col_major(data_arr, validate_col, &info);
-        printf("%d\n", info.invalid_sudoku);
-        Table_free(&(info.table));
+
+        validate_submaps(data_arr, &info);
+        
+        printf("%d\n", info.invalid_sudoku); //TEST
 
         UArray2_free(&data_arr);
         Pnmrdr_free(&reader);
         fclose(input);
+        
+        if (info.invalid_sudoku == true) {
+                exit(EXIT_FAILURE);
+        }
         return EXIT_SUCCESS;
-
 }
 
 void populate_data(int col, int row, UArray2_T uarray2, void *p1, void *p2) 
@@ -106,10 +114,10 @@ void validate_row(int col, int row, UArray2_T uarray2, void *p1, void *info_p)
                 if (is_correct_intensity(*entry_p)) {
                         //only care whether key exists,
                         //we don't care value
-                        Table_put(info->table, key, NULL);
+                        Table_put(info->table, key, entry_p);
                 } else {
                         info->invalid_sudoku = true;
-                        Table_put(info->table, key, NULL);
+                        Table_put(info->table, key, entry_p);
                 }
                 
         }
@@ -134,11 +142,39 @@ void validate_col(int col, int row, UArray2_T uarray2, void *p1, void *info_p)
                 info->invalid_sudoku = true;
         } else {
                 if (is_correct_intensity(*entry_p)) {
-                        Table_put(info->table, key, NULL);
+                        Table_put(info->table, key, entry_p);
                 } else {
                         info->invalid_sudoku = true;
-                        Table_put(info->table, key, NULL);
+                        Table_put(info->table, key, entry_p);
                 }
                 
+        }
+}
+
+void validate_one_submap(int start_col, int start_row, UArray2_T map, void *info_p)
+{
+        struct sudokuInfo *info = info_p;
+
+        for (int c = start_col; c < start_col + 3; c++) {
+                for (int r = start_row; r < start_row + 3; r++) {
+                        int *entry_p = UArray2_at(map, c, r);
+                        const void *key = Atom_int(*entry_p);
+                        if (Table_get(info->table, key) != NULL) {
+                                info->invalid_sudoku = true;
+                        } else {
+                                Table_put(info->table, key, entry_p);
+                        }   
+                }
+        }
+}
+
+void validate_submaps(UArray2_T map, void *info_p) {
+        struct sudokuInfo *info = info_p;
+        for (int c = 0; c < 9; c += 3) {
+                for (int r = 0; r < 9; r += 3) {
+                        info->table = Table_new(9, NULL, NULL);
+                        validate_one_submap(c, r, map, info);
+                        Table_free(&(info->table));
+                }
         }
 }

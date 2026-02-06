@@ -39,6 +39,7 @@ T Bit2_new(int width, int height)
 int Bit2_get(T bit2, int col, int row) 
 {
         assert(bit2 != NULL);
+        assert(col < bit2->width && row < bit2->height);
         int index = (bit2->width * row) + col;
         return Bit_get(bit2->data, index);
 }
