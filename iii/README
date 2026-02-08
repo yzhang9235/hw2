@@ -1,0 +1,28 @@
+/**********************************************************
+* HW 2: iii
+* CS 40
+* README
+* Name: Lauren O'Rourke(lorour02) and Yining Zhang(yzhang92)
+* Date: 2/7/2026
+*********************************************************/
+
+Acknowledgements:
+-------------------------
+We used the Hanson textbook and supplement to learn more information about 
+the UArray and Bit interfaces to inform our implementations of UArray2 and 
+Bit2.
+We also referenced the Pnmrdr documentation for help with reading image 
+files.
+We used the Hanson textbook for information on the Sequence interface, 
+which we used in unblackedges.
+
+Implementation Status:
+-------------------------
+All required functionalities of the UArray2 and Bit2 interfaces have been 
+implemented according to the spec.
+All required functionalities of the sudoku and unblackedges programs have 
+been implemented according to the spec.
+
+Time Spent: 
+-------------------------
+Approximately 13 hours
